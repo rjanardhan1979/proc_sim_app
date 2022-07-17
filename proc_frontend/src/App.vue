@@ -10,18 +10,22 @@
         </h1>
       </div>
 
-      <div class="grid grid-rows-3 gap-6 justify-start py-10">
+      <div
+        class="grid grid-rows-3 grid-cols-1 w-full gap-6 justify-start py-10"
+      >
         <div
-          class="form-select row-span-1 w-full px-3 py-1.5  text-sm font-medium text-gray-700
-           bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 
-           rounded transition ease-in-out m-0 focus:text-gray-300 focus:bg-white
-           focus:outline-none"
+          class="form-select row-span-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-300 focus:bg-white focus:outline-none"
           aria-label="Default select example"
         >
-          <select name="" id="">
-            <option selected>Select Procedure</option>
-            <option value="1">primary knee</option>
-            <option value="2">primary hip</option>
+          <select
+            class="w-full"
+            name=""
+            v-model="procedure"
+            id=""
+            @change="refresh()"
+          >
+            <option value="primary knee">primary knee</option>
+            <option value="primary hip">primary hip</option>
           </select>
         </div>
         <div
@@ -36,23 +40,22 @@
           <input
             id="entitlement"
             v-model="entitlement_val"
-            type="range"            
+            type="range"
             min="1"
-            max="15"            
-            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"            
+            max="15"
+            class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
           />
-          <label            
-            class="mt-2 text-sm font-medium text-gray-700 flex justify-center items-center" 
-            >{{entitlement_val}}</label
+          <label
+            class="mt-2 text-sm font-medium text-gray-700 flex justify-center items-center"
+            >{{ entitlement_val }}</label
           >
-
         </div>
       </div>
     </div>
     <div
-      class="section shadow-lg bg-green-100 text-green-500 text-lg font-bold text-center p-10 rounded-lg col-span-3 row-span-5"
+      class="section shadow-lg bg-white p-10 rounded-lg col-span-3 row-span-5"
     >
-      2
+      <test-table :myData="myData" :myDataKeys="myDataKeys" />
     </div>
     <div
       class="footer shadow-lg bg-green-100 text-green-500 text-lg font-bold text-center p-10 rounded-lg row-start-6 col-start-2 col-span-3 row-span-1"
@@ -63,21 +66,30 @@
 </template>
 
 <script>
+import testTable from "./components/testTable.vue";
 export default {
   name: "App",
-  components: {},
+  components: { testTable },
   data() {
     return {
-      x: null,
-      entitlement_val: 8
+      myData: null,
+      myDataKeys: null,
+      entitlement_val: 8,
+      procedure: "primary knee",
     };
   },
   async created() {
-    //const response = await fetch('http://localhost:8000');
-    
-    const filter = await fetch("http://localhost:8000/proc_type/primary%20hip");
-    const result = await filter.json();
-    this.x = result;
+    this.refresh();
+  },
+  methods: {
+    async refresh() {
+      const filter = await fetch(
+        "http://localhost:8000/proc_type/" + this.procedure
+      );
+      const result = await filter.json();
+      this.myData = result;
+      this.myDataKeys = Object.keys(this.myData[0]);
+    },
   },
 };
 </script>
