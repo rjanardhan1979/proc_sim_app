@@ -24,10 +24,6 @@ inv_hist = runApp()[0]
 order_log = runApp()[1]
 inv_history_json = json.loads(inv_hist.to_json(orient='records'))
 
-
-
-
-
 @app.get("/")
 async def root():
     return inv_history_json
